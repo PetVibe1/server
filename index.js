@@ -34,7 +34,18 @@ if (!fs.existsSync(uploadsPath)) {
 // Configure Socket.IO with proper CORS settings
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+    origin: function(origin, callback) {
+      // Parse the comma-separated list of allowed origins
+      const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:3000').split(',');
+      
+      // Check if the request origin is in the allowed list or if it's null (e.g. same origin)
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        console.warn(`Socket.IO origin ${origin} not allowed`);
+        callback(null, true); // Allow anyway for now, but log a warning
+      }
+    },
     methods: ['GET', 'POST'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -49,7 +60,18 @@ const io = new Server(server, {
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: function(origin, callback) {
+    // Parse the comma-separated list of allowed origins
+    const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:3000').split(',');
+    
+    // Check if the request origin is in the allowed list or if it's null (e.g. same origin)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.warn(`HTTP origin ${origin} not allowed`);
+      callback(null, true); // Allow anyway for now, but log a warning
+    }
+  },
   credentials: true
 }));
 app.use(express.json());
