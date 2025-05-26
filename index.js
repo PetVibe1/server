@@ -60,18 +60,7 @@ const io = new Server(server, {
 
 // Middleware
 app.use(cors({
-  origin: function(origin, callback) {
-    // Parse the comma-separated list of allowed origins
-    const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:3000').split(',');
-    
-    // Check if the request origin is in the allowed list or if it's null (e.g. same origin)
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      console.warn(`HTTP origin ${origin} not allowed`);
-      callback(null, true); // Allow anyway for now, but log a warning
-    }
-  },
+  origin: '*', // Tạm thời cho phép tất cả các nguồn gốc để debug
   credentials: true
 }));
 app.use(express.json());
